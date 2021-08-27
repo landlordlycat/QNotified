@@ -24,13 +24,15 @@ package me.singleneuron.qn_kernel.tlb
 import cc.ioctl.hook.ReplyNoAtHook
 import cc.ioctl.hook.VasProfileAntiCrash
 import ltd.nextalone.hook.ChatWordsCount
+import me.ketal.hook.SortAtPanel
 import me.kyuubiran.hook.AutoMosaicName
+import me.kyuubiran.hook.RemovePlayTogether
+import me.kyuubiran.hook.SimplifyQQSettingMe
 import nil.nadph.qnotified.util.QQVersion.*
 
 class QQConfigTable : ConfigTableInterface {
 
     override val configs: Map<String?, Map<Long, Any>> = mapOf(
-
         )
 
     override val rangingConfigs: Map<String?, Map<Long, Any>> = mapOf(
@@ -67,6 +69,34 @@ class QQConfigTable : ConfigTableInterface {
             QQ_8_5_5 to "r",
             QQ_8_6_0 to "k",
         ),
+
+        //中间部分(QQ会员 我的钱包等)
+        SimplifyQQSettingMe.MidContentName to mapOf(
+            QQ_8_4_1 to "k",
+            QQ_8_6_0 to "n",
+            QQ_8_6_5 to "c",
+            QQ_8_7_0 to "b",
+            QQ_8_8_11 to "R",
+            QQ_8_8_17 to "S"
+        ),
+
+        SortAtPanel.sessionInfoTroopUin to mapOf(
+            QQ_8_4_1 to "a",
+            QQ_8_8_20 to "b",
+        ),
+
+        // 打卡
+        RemovePlayTogether.ClockInEntryHelper to mapOf(
+            QQ_8_4_8 to "d",
+            QQ_8_8_20 to "f",
+        ),
+
+        // 一起嗨
+        RemovePlayTogether.TogetherControlHelper to mapOf(
+            QQ_8_4_1 to "h",
+            QQ_8_4_8 to "g",
+            QQ_8_8_20 to "n"
+        )
     )
 
 }
