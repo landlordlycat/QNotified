@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -21,24 +21,27 @@
  */
 package nil.nadph.qnotified.bridge;
 
+import static nil.nadph.qnotified.util.Initiator._BaseSessionInfo;
+import static nil.nadph.qnotified.util.Initiator._QQAppInterface;
+import static nil.nadph.qnotified.util.Initiator._SessionInfo;
+import static nil.nadph.qnotified.util.ReflexUtil.iget_object_or_null;
+import static nil.nadph.qnotified.util.ReflexUtil.invoke_virtual;
+import static nil.nadph.qnotified.util.Utils.getQQAppInterface;
+import static nil.nadph.qnotified.util.Utils.getShort$Name;
+import static nil.nadph.qnotified.util.Utils.log;
+
 import android.content.Context;
 import android.os.Parcelable;
-
 import java.io.Externalizable;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-
 import me.singleneuron.qn_kernel.data.HostInfo;
 import mqq.app.AppRuntime;
 import nil.nadph.qnotified.util.DexKit;
 import nil.nadph.qnotified.util.Initiator;
+import nil.nadph.qnotified.util.ReflexUtil;
 import nil.nadph.qnotified.util.Toasts;
-
-import static nil.nadph.qnotified.util.Initiator.*;
-import static nil.nadph.qnotified.util.ReflexUtil.iget_object_or_null;
-import static nil.nadph.qnotified.util.ReflexUtil.invoke_virtual;
-import static nil.nadph.qnotified.util.Utils.*;
 
 public class ChatActivityFacade {
 
@@ -62,7 +65,8 @@ public class ChatActivityFacade {
             if (argt.length != 6) {
                 continue;
             }
-            if (argt[1].equals(Context.class) && argt[2].equals(_SessionInfo())
+            if (argt[1].equals(Context.class)
+                && (argt[2].equals(_SessionInfo()) || argt[2].equals(_BaseSessionInfo()))
                 && argt[3].equals(String.class) && argt[4].equals(ArrayList.class)) {
                 m = mi;
                 m.setAccessible(true);
@@ -71,6 +75,9 @@ public class ChatActivityFacade {
             }
         }
         try {
+            if (sendMsgParams == null) {
+                sendMsgParams = SendMsgParams.newInstance();
+            }
             return (long[]) m
                 .invoke(null, qqAppInterface, context, sessionInfo, msg, atInfo, sendMsgParams);
         } catch (Exception e) {
@@ -102,13 +109,12 @@ public class ChatActivityFacade {
                 continue;
             }
             if (argt[1].equals(Context.class)
+                && (argt[2].equals(_SessionInfo()) || argt[2].equals(_BaseSessionInfo()))
                 && argt[3].equals(String.class) && argt[4].equals(ArrayList.class)) {
-                if (argt[2].equals(_SessionInfo()) || argt[2].equals(load("com/tencent/mobileqq/activity/aio/BaseSessionInfo"))) {
-                    m = mi;
-                    m.setAccessible(true);
-                    SendMsgParams = argt[5];
-                    break;
-                }
+                m = mi;
+                m.setAccessible(true);
+                SendMsgParams = argt[5];
+                break;
             }
         }
         try {
@@ -242,8 +248,20 @@ public class ChatActivityFacade {
                         "暂不支持发送长消息");
                     return;
                 }
-                sendMessage(app, HostInfo.getHostInfo().getApplication(), session,
-                    msgText);
+                ArrayList<?> atInfo = null;
+                try {
+                    String extStr = (String) ReflexUtil.invoke_virtual(msg, "getExtInfoFromExtStr", "troop_at_info_list", String.class);
+                    atInfo = (ArrayList) ReflexUtil.invoke_virtual(msg, "getTroopMemberInfoFromExtrJson", extStr, String.class);
+                } catch (Exception e) {
+                   // ignore
+                }
+                if (atInfo == null) {
+                    sendMessage(app, HostInfo.getHostInfo().getApplication(), session,
+                        msgText);
+                } else {
+                    sendMessage(app, HostInfo.getHostInfo().getApplication(), session,
+                        msgText, atInfo, null);
+                }
                 break;
             case "MessageForPic":
                 try {

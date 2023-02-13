@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -43,13 +43,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.tencent.mobileqq.widget.BounceScrollView;
-
-import java.io.IOException;
-
 import cc.ioctl.hook.FakeBatteryHook;
-import me.singleneuron.qn_kernel.ui.NewSettingsActivity;
+import com.tencent.mobileqq.widget.BounceScrollView;
+import java.io.IOException;
+import me.singleneuron.qn_kernel.tlb.ActivityRouter;
 import nil.nadph.qnotified.InjectDelayableHooks;
 import nil.nadph.qnotified.R;
 import nil.nadph.qnotified.ui.ResUtils;
@@ -60,7 +57,7 @@ import nil.nadph.qnotified.util.Utils;
 @SuppressLint("Registered")
 public class EulaActivity extends IphoneTitleBarActivityCompat implements View.OnClickListener {
 
-    public static final int CURRENT_EULA_VERSION = 8;
+    public static final int CURRENT_EULA_VERSION = 9;
     private static final int R_ID_I_HAVE_READ = 0x300AFF91;
     private static final int R_ID_I_AGREE = 0x300AFF92;
     private static final int R_ID_I_DENY = 0x300AFF93;
@@ -183,7 +180,8 @@ public class EulaActivity extends IphoneTitleBarActivityCompat implements View.O
                 } else {
                     LicenseStatus.setEulaStatus(CURRENT_EULA_VERSION);
                     InjectDelayableHooks.doInitDelayableHooksMP();
-                    this.startActivity(new Intent(this, NewSettingsActivity.class));
+                    this.startActivity(
+                        new Intent(this, ActivityRouter.INSTANCE.getActivityClass()));
                     finish();
                 }
                 break;

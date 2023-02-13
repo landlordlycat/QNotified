@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,12 +25,13 @@ import android.content.Intent
 import de.robv.android.xposed.XC_MethodHook
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.decorator.BaseStartActivityHookDecorator
+import me.singleneuron.qn_kernel.tlb.实验性功能
 import me.singleneuron.util.dump
 import nil.nadph.qnotified.util.Utils
-import org.ferredoxin.ferredoxin_ui.base.UiSwitchPreference
+import org.ferredoxin.ferredoxinui.common.base.UiSwitchPreference
 
 @UiItem
-object DebugDump : BaseStartActivityHookDecorator("debugDump") {
+object DebugDump : BaseStartActivityHookDecorator() {
 
     override fun doDecorate(intent: Intent, param: XC_MethodHook.MethodHookParam): Boolean {
         Utils.logd("debugDump: startActivity " + param.thisObject::class.java.name)
@@ -43,7 +44,7 @@ object DebugDump : BaseStartActivityHookDecorator("debugDump") {
         summary = "没事别开"
     }
 
-    override val preferenceLocate: Array<String> = arrayOf("实验性功能")
+    override val preferenceLocate: Array<String> = 实验性功能
 
     /*override fun doInit(): Boolean {
         //dump setResult

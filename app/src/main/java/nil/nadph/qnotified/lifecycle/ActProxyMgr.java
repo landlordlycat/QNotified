@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -52,7 +52,7 @@ public class ActProxyMgr {
             || className.startsWith("me.ketal.ui.activity.")
             || className.startsWith("com.rymmmmm.activity.")
             || className.startsWith("cn.lliiooll.activity.")
-            || className.startsWith("ltd.nextalone.activity.");
+            || className.startsWith("xyz.nextalone.activity.");
     }
 
     public static boolean isModuleBundleClassLoaderRequired(@NonNull String className) {

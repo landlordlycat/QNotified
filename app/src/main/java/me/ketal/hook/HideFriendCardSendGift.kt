@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -27,26 +27,26 @@ import android.widget.TextView
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import ltd.nextalone.util.hookAfter
-import ltd.nextalone.util.method
 import me.ketal.util.BaseUtil.tryVerbosely
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge
 import me.singleneuron.qn_kernel.data.requireMinQQVersion
-import me.singleneuron.qn_kernel.ui.base.净化功能
+import me.singleneuron.qn_kernel.tlb.净化_聊天
 import nil.nadph.qnotified.base.annotation.FunctionEntry
 import nil.nadph.qnotified.util.QQVersion
 import nil.nadph.qnotified.util.ReflexUtil
+import xyz.nextalone.util.hookAfter
+import xyz.nextalone.util.method
 
 @FunctionEntry
 @UiItem
 object HideFriendCardSendGift : CommonDelayAbleHookBridge() {
 
     override val preference = uiSwitchPreference {
-        title = "隐藏空间好友热播和广告"
+        title = "屏蔽好友资料页送礼物按钮"
     }
 
-    override val preferenceLocate = 净化功能
+    override val preferenceLocate = 净化_聊天
 
     override fun isValid() = requireMinQQVersion(QQVersion.QQ_8_0_0)
 

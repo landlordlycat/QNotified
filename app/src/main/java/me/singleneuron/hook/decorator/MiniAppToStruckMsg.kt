@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -29,7 +29,7 @@ import me.singleneuron.data.StructMsgData
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.data.hostInfo
 import me.singleneuron.qn_kernel.decorator.BaseItemBuilderFactoryHookDecorator
-import me.singleneuron.qn_kernel.ui.base.辅助功能
+import me.singleneuron.qn_kernel.tlb.辅助功能
 import nil.nadph.qnotified.util.Initiator
 import nil.nadph.qnotified.util.QQVersion
 import nil.nadph.qnotified.util.ReflexUtil
@@ -37,7 +37,7 @@ import nil.nadph.qnotified.util.Utils
 import org.json.JSONObject
 
 @UiItem
-object MiniAppToStruckMsg : BaseItemBuilderFactoryHookDecorator(MiniAppToStruckMsg::class.java.simpleName) {
+object MiniAppToStruckMsg : BaseItemBuilderFactoryHookDecorator() {
 
     override fun doDecorate(
         result: Int,

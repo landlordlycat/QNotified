@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -31,25 +31,33 @@ import android.widget.TextView
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.plusAssign
-import ltd.nextalone.util.*
 import me.ketal.util.findViewByType
 import me.kyuubiran.hook.SimplifyQQSettingMe
+import me.singleneuron.qn_kernel.annotation.UiItem
+import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge
 import me.singleneuron.qn_kernel.data.isTim
 import me.singleneuron.qn_kernel.data.requireMinQQVersion
 import me.singleneuron.qn_kernel.tlb.ConfigTable
-import nil.nadph.qnotified.util.QQVersion
+import me.singleneuron.qn_kernel.tlb.娱乐功能
 import nil.nadph.qnotified.base.annotation.FunctionEntry
-import nil.nadph.qnotified.hook.CommonDelayableHook
+import nil.nadph.qnotified.util.QQVersion
+import xyz.nextalone.util.*
 
 @SuppressLint("StaticFieldLeak")
 @FunctionEntry
-object HideTab : CommonDelayableHook("ketal_HideTab") {
+@UiItem
+object HideTab : CommonDelayAbleHookBridge() {
+    override val preferenceLocate = 娱乐功能
+    override val preference = uiSwitchPreference {
+        title = "隐藏底栏"
+        summary = "底栏项目移到侧滑"
+    }
     private lateinit var tab: TabHost
 
     override fun isValid() = !isTim()
 
     override fun initOnce() = tryOrFalse {
-        val clazz= "com.tencent.mobileqq.widget.QQTabHost".clazz
+        val clazz = "com.tencent.mobileqq.widget.QQTabHost".clazz
             ?: return@tryOrFalse
         for (m in clazz.declaredMethods) {
             if (m.name == "setOnTabSelectionListener") {

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -22,11 +22,10 @@
 package me.singleneuron.qn_kernel.tlb
 
 import cc.ioctl.hook.ReplyNoAtHook
-import ltd.nextalone.hook.HideTotalNumber
 import me.ketal.hook.LeftSwipeReplyHook
 import me.kyuubiran.hook.AutoMosaicName
-import nil.nadph.qnotified.util.TIMVersion.*
 import nil.nadph.qnotified.bridge.QQMessageFacade
+import nil.nadph.qnotified.util.TIMVersion.*
 
 class TIMConfigTable : ConfigTableInterface {
 

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -21,7 +21,7 @@
  */
 package com.rymmmmm.hook;
 
-import static nil.nadph.qnotified.util.ReflexUtil.iget_object_or_null;
+import static nil.nadph.qnotified.util.ReflexUtil.getFirstByType;
 import static nil.nadph.qnotified.util.Utils.log;
 
 import android.view.View;
@@ -29,20 +29,22 @@ import android.widget.ImageView;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import java.lang.reflect.Method;
+import me.singleneuron.qn_kernel.annotation.UiItem;
+import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge;
+import me.singleneuron.qn_kernel.tlb.UiRoutineKt;
 import nil.nadph.qnotified.base.annotation.FunctionEntry;
-import nil.nadph.qnotified.hook.CommonDelayableHook;
 import nil.nadph.qnotified.util.Initiator;
 import nil.nadph.qnotified.util.LicenseStatus;
+import org.ferredoxin.ferredoxinui.common.base.UiSwitchPreference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 //回赞界面一键20赞
 @FunctionEntry
-public class OneTapTwentyLikes extends CommonDelayableHook {
+@UiItem
+public class OneTapTwentyLikes extends CommonDelayAbleHookBridge {
 
     public static final OneTapTwentyLikes INSTANCE = new OneTapTwentyLikes();
-
-    protected OneTapTwentyLikes() {
-        super("rq_one_tap_twenty_likes");
-    }
 
     @Override
     public boolean initOnce() {
@@ -61,7 +63,7 @@ public class OneTapTwentyLikes extends CommonDelayableHook {
                             }
                             View view = (View) param.args[0];
                             Object tag = view.getTag();
-                            Object likeClickListener = iget_object_or_null(param.thisObject, "a",
+                            Object likeClickListener = getFirstByType(param.thisObject,
                                 Initiator._VoteHelper());
                             Method onClick = likeClickListener.getClass()
                                 .getDeclaredMethod("a", tag.getClass(), ImageView.class);
@@ -77,5 +79,20 @@ public class OneTapTwentyLikes extends CommonDelayableHook {
             log(e);
             return false;
         }
+    }
+
+    private final UiSwitchPreference mUiSwitchPreference = this.new UiSwitchPreferenceItemFactory(
+        "回赞界面一键20赞");
+
+    @NotNull
+    @Override
+    public UiSwitchPreference getPreference() {
+        return mUiSwitchPreference;
+    }
+
+    @Nullable
+    @Override
+    public String[] getPreferenceLocate() {
+        return UiRoutineKt.get花Q();
     }
 }

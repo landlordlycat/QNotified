@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -26,20 +26,20 @@ import android.view.View
 import cn.lliiooll.msg.MessageReceiver
 import cn.lliiooll.util.MsgRecordUtil
 import de.robv.android.xposed.XposedHelpers
-import ltd.nextalone.base.MultiItemDelayableHook
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.data.MsgRecordData
 import me.singleneuron.qn_kernel.data.requireMinQQVersion
-import me.singleneuron.qn_kernel.ui.base.净化功能
+import me.singleneuron.qn_kernel.tlb.净化_扩展
 import nil.nadph.qnotified.util.QQVersion
+import xyz.nextalone.base.MultiItemDelayableHook
 
 @UiItem
 object AntiMessage : MultiItemDelayableHook("qn_anti_message_items"), MessageReceiver {
-    override var allItems = ""
-    override val defaultItems = ""
+    override var allItems = setOf<String>()
+    override val defaultItems = setOf<String>()
     override var items: MutableList<String> = MsgRecordUtil.MSG.keys.sorted().toMutableList()
     override val preferenceTitle: String = "静默指定类型消息通知"
-    override val preferenceLocate: Array<String> = 净化功能
+    override val preferenceLocate: Array<String> = 净化_扩展
 
 
     override fun onReceive(data: MsgRecordData?): Boolean {

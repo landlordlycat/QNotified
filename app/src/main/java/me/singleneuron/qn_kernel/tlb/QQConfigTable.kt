@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -23,11 +23,11 @@ package me.singleneuron.qn_kernel.tlb
 
 import cc.ioctl.hook.ReplyNoAtHook
 import cc.ioctl.hook.VasProfileAntiCrash
-import ltd.nextalone.hook.ChatWordsCount
 import me.ketal.hook.SortAtPanel
 import me.kyuubiran.hook.RemovePlayTogether
 import me.kyuubiran.hook.SimplifyQQSettingMe
 import nil.nadph.qnotified.util.QQVersion.*
+import xyz.nextalone.hook.ChatWordsCount
 
 class QQConfigTable : ConfigTableInterface {
 
@@ -54,6 +54,10 @@ class QQConfigTable : ConfigTableInterface {
             QQ_8_8_20 to "n87",
             QQ_8_8_23 to "n_d",
             QQ_8_8_33 to "nbn",
+            QQ_8_8_35 to "nci",
+            QQ_8_8_38 to "ncy",
+            QQ_8_8_50 to "nf4",
+            QQ_8_8_68 to "nm7",
         ),
 
         VasProfileAntiCrash::class.java.simpleName to mapOf(

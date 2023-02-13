@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -21,8 +21,6 @@
  */
 package cc.ioctl.hook;
 
-
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static nil.nadph.qnotified.util.Initiator._SessionInfo;
 import static nil.nadph.qnotified.util.Initiator.load;
 import static nil.nadph.qnotified.util.ReflexUtil.getFirstNSFByType;
@@ -32,25 +30,18 @@ import static nil.nadph.qnotified.util.Utils.log;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import cc.ioctl.activity.ChatTailActivity;
-import cc.ioctl.dialog.RikkaCustomMsgTimeFormatDialog;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import ltd.nextalone.util.SystemServiceUtils;
-import me.ketal.hook.Emoji2Sticker;
 import me.singleneuron.hook.CopyCardMsg;
+import me.singleneuron.qn_kernel.decorator.BaseInputButtonDecorator;
 import mqq.app.AppRuntime;
 import nil.nadph.qnotified.base.annotation.FunctionEntry;
 import nil.nadph.qnotified.hook.CommonDelayableHook;
@@ -64,6 +55,7 @@ import nil.nadph.qnotified.util.Initiator;
 import nil.nadph.qnotified.util.LicenseStatus;
 import nil.nadph.qnotified.util.Toasts;
 import nil.nadph.qnotified.util.Utils;
+import xyz.nextalone.util.SystemServiceUtils;
 
 @FunctionEntry
 public class InputButtonHook extends CommonDelayableHook {
@@ -87,6 +79,12 @@ public class InputButtonHook extends CommonDelayableHook {
                     @Override
                     public void afterHookedMethod(MethodHookParam param) throws Throwable {
                         if (LicenseStatus.sDisableCommonHooks) {
+                            return;
+                        }
+                        if (LicenseStatus.isBlacklisted()) {
+                            return;
+                        }
+                        if (!isEnabled()) {
                             return;
                         }
                         try {
@@ -119,9 +117,6 @@ public class InputButtonHook extends CommonDelayableHook {
                                 layout.setTouchInterceptor(new TouchEventToLongClickAdapter() {
                                     @Override
                                     public boolean onTouch(View v, MotionEvent event) {
-                                        if (!CardMsgHook.INSTANCE.isEnabled()) {
-                                            return false;
-                                        }
                                         ViewGroup vg = (ViewGroup) v;
                                         if (event.getAction() == MotionEvent.ACTION_DOWN &&
                                             vg.getChildCount() != 0 && vg.getChildAt(0)
@@ -134,15 +129,6 @@ public class InputButtonHook extends CommonDelayableHook {
                                     @Override
                                     public boolean onLongClick(View v) {
                                         try {
-                                            if (LicenseStatus.sDisableCommonHooks) {
-                                                return false;
-                                            }
-                                            if (LicenseStatus.isBlacklisted()) {
-                                                return false;
-                                            }
-                                            if (!CardMsgHook.INSTANCE.isEnabled()) {
-                                                return false;
-                                            }
                                             ViewGroup vg = (ViewGroup) v;
                                             Context ctx = v.getContext();
                                             if (vg.getChildCount() != 0 && !vg.getChildAt(0)
@@ -163,118 +149,22 @@ public class InputButtonHook extends CommonDelayableHook {
                                     }
                                 }.setLongPressTimeoutFactor(1.5f));
                             }
-                            sendBtn.setOnLongClickListener(new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-                                    if (LicenseStatus.sDisableCommonHooks) {
-                                        return false;
-                                    }
-                                    if (LicenseStatus.isBlacklisted()) {
-                                        return false;
-                                    }
-                                    Context ctx = v.getContext();
-                                    EditText input = aioRootView.findViewById(ctx.getResources()
-                                        .getIdentifier("input", "id", ctx.getPackageName()));
-                                    String text = input.getText().toString();
-                                    if (((TextView) v).length() == 0
-                                        //|| !CardMsgHook.INSTANCE.isEnabled()
-                                    ) {
-                                        return false;
-                                    } else if (
-                                        CardMsgHook.INSTANCE.isEnabled()&&
-                                        (text.contains("<?xml") || text.contains("{\""))
-                                    ) {
-                                        new Thread(() -> {
-                                            if (text.contains("<?xml")) {
-                                                try {
-                                                    if (CardMsgHook
-                                                        .ntSendCardMsg(qqApp, session, text)) {
-                                                        Utils
-                                                            .runOnUiThread(() -> input.setText(""));
-                                                        CliOper
-                                                            .sendCardMsg(Utils.getLongAccountUin(),
-                                                                text);
-                                                    } else {
-                                                        Toasts.error(ctx, "XML语法错误(代码有误)");
-                                                    }
-                                                } catch (Throwable e) {
-                                                    if (e instanceof InvocationTargetException) {
-                                                        e = e.getCause();
-                                                    }
-                                                    log(e);
-                                                    Toasts.error(ctx,
-                                                        e.toString().replace("java.lang.", ""));
-                                                }
-                                            } else if (text.contains("{\"")) {
-                                                try {
-                                                    // Object arkMsg = load("com.tencent.mobileqq.data.ArkAppMessage").newInstance();
-                                                    if (CardMsgHook
-                                                        .ntSendCardMsg(qqApp, session, text)) {
-                                                        Utils
-                                                            .runOnUiThread(() -> input.setText(""));
-                                                        CliOper
-                                                            .sendCardMsg(Utils.getLongAccountUin(),
-                                                                text);
-                                                    } else {
-                                                        Toasts.error(ctx, "JSON语法错误(代码有误)");
-                                                    }
-                                                } catch (Throwable e) {
-                                                    if (e instanceof InvocationTargetException) {
-                                                        e = e.getCause();
-                                                    }
-                                                    log(e);
-                                                    Toasts.error(ctx,
-                                                        e.toString().replace("java.lang.", ""));
-                                                }
-                                            }
-                                        }).start();
-                                    } else {
-                                        Emoji2Sticker emoji2Sticker = Emoji2Sticker.INSTANCE;
-                                        if (emoji2Sticker.superIsEnable()) {
-                                            Object stickerParse = emoji2Sticker.parseMsgForAniSticker(
-                                                text, session);
-                                            boolean singleAniSticker = (boolean) iget_object_or_null(
-                                                stickerParse, "singleAniSticker");
-                                            boolean sessionAvailable = (boolean) iget_object_or_null(
-                                                stickerParse, "sessionAvailable");
-                                            boolean configAniSticker = (boolean) iget_object_or_null(
-                                                stickerParse, "configAniSticker");
-                                            if (singleAniSticker && sessionAvailable
-                                                && configAniSticker) {
-                                                emoji2Sticker.sendParseAticker(stickerParse,
-                                                    session);
-                                                input.getText().clear();
-                                                return true;
-                                            }
-                                        }
-                                        if (!ChatTailHook.INSTANCE.isEnabled()) {
-                                            return false;
-                                        }
-                                        if (!Utils.isNullOrEmpty(
-                                            ChatTailHook.INSTANCE.getTailCapacity())) {
-                                            int battery = FakeBatteryHook.INSTANCE.isEnabled() ?
-                                                FakeBatteryHook.INSTANCE.getFakeBatteryStatus() < 1
-                                                    ? ChatTailActivity.getBattery()
-                                                    : FakeBatteryHook.INSTANCE
-                                                        .getFakeBatteryCapacity()
-                                                : ChatTailActivity.getBattery();
-                                            String tc = ChatTailHook.INSTANCE.getTailCapacity().
-                                                replace(ChatTailActivity.delimiter, input.getText())
-                                                .replace("#model#", Build.MODEL)
-                                                .replace("#brand#", Build.BRAND)
-                                                .replace("#battery#", battery + "")
-                                                .replace("#power#", ChatTailActivity.getPower())
-                                                .replace("#time#", new SimpleDateFormat(
-                                                    RikkaCustomMsgTimeFormatDialog.getTimeFormat())
-                                                    .format(new Date()));
-                                            input.setText(tc);
-                                            sendBtn.callOnClick();
-                                        } else {
-                                            Toasts.error(ctx, "你还没有设置小尾巴");
-                                        }
-                                    }
-                                    return true;
+                            sendBtn.setOnLongClickListener(v -> {
+                                Context ctx1 = v.getContext();
+                                EditText input = aioRootView.findViewById(ctx1.getResources()
+                                    .getIdentifier("input", "id", ctx1.getPackageName()));
+                                String text = input.getText().toString();
+                                if (((TextView) v).length()
+                                    == 0) { //|| !CardMsgHook.INSTANCE.isEnabled()
+                                    return false;
                                 }
+                                for (BaseInputButtonDecorator decorator : decorators) {
+                                    if (decorator
+                                        .decorate(text, session, input, sendBtn, ctx1, qqApp)) {
+                                        return true;
+                                    }
+                                }
+                                return true;
                             });
                         } catch (Throwable e) {
                             log(e);
@@ -282,52 +172,6 @@ public class InputButtonHook extends CommonDelayableHook {
                     }
                 });
             //End: send btn
-            //Begin: ArkApp
-            Class cl_ArkAppItemBuilder = DexKit.doFindClass(DexKit.C_ARK_APP_ITEM_BUBBLE_BUILDER);
-            findAndHookMethod(cl_ArkAppItemBuilder, "a", int.class, Context.class,
-                load("com/tencent/mobileqq/data/ChatMessage"), new MenuItemClickCallback());
-            for (Method m : cl_ArkAppItemBuilder.getDeclaredMethods()) {
-                if (!m.getReturnType().isArray()) {
-                    continue;
-                }
-                Class[] ps = m.getParameterTypes();
-                if (ps.length == 1 && ps[0].equals(View.class)) {
-                    XposedBridge.hookMethod(m, new GetMenuItemCallBack());
-                    break;
-                }
-            }
-            //End: ArkApp
-            //Begin: StructMsg
-            Class cl_StructingMsgItemBuilder = load(
-                "com/tencent/mobileqq/activity/aio/item/StructingMsgItemBuilder");
-            findAndHookMethod(cl_StructingMsgItemBuilder, "a", int.class, Context.class,
-                load("com/tencent/mobileqq/data/ChatMessage"), new MenuItemClickCallback());
-            for (Method m : cl_StructingMsgItemBuilder.getDeclaredMethods()) {
-                if (!m.getReturnType().isArray()) {
-                    continue;
-                }
-                Class[] ps = m.getParameterTypes();
-                if (ps.length == 1 && ps[0].equals(View.class)) {
-                    XposedBridge.hookMethod(m, new GetMenuItemCallBack());
-                    break;
-                }
-            }
-            //End: StructMsg
-//            for (Method m : load("com.tencent.mobileqq.structmsg.StructMsgForGeneralShare").getMethods()) {
-//                if (m.getName().equals("getView")) {
-//                    XposedBridge.hookMethod(m, new XC_MethodHook() {
-//                        @Override
-//                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                            View v = (View) param.getResult();
-//                            View.OnLongClickListener l = getBubbleLongClickListener((Activity) param.args[0]);
-//                            if (v != null && l != null) {
-//                                //v.setOnLongClickListener(l);
-//                            }
-//                        }
-//                    });
-//                    break;
-//                }
-//            }
             return true;
         } catch (Throwable throwable) {
             log(throwable);
@@ -335,13 +179,24 @@ public class InputButtonHook extends CommonDelayableHook {
         }
     }
 
+    private static final BaseInputButtonDecorator[] decorators = {CardMsgHook.INSTANCE,
+        ChatTailHook.INSTANCE};
+
     @Override
     public boolean isEnabled() {
-        return true;
+        for (BaseInputButtonDecorator decorator : decorators) {
+            if (decorator.isEnabled()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void setEnabled(boolean enabled) {
+        if (enabled) {
+            init();
+        }
     }
 
     public static class GetMenuItemCallBack extends XC_MethodHook {

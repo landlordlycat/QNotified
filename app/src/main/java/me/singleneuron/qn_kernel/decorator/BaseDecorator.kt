@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -22,59 +22,71 @@
 package me.singleneuron.qn_kernel.decorator
 
 import android.content.Context
-import android.os.Looper
-import androidx.lifecycle.MutableLiveData
-import me.singleneuron.qn_kernel.data.hostInfo
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import me.ketal.data.ConfigData
 import nil.nadph.qnotified.SyncUtils
-import nil.nadph.qnotified.config.ConfigManager
-import nil.nadph.qnotified.util.Toasts
-import nil.nadph.qnotified.util.Utils
-import org.ferredoxin.ferredoxin_ui.base.UiSwitchItem
-import org.ferredoxin.ferredoxin_ui.base.UiSwitchPreference
+import org.ferredoxin.ferredoxinui.common.base.DirectResourceProvider
+import org.ferredoxin.ferredoxinui.common.base.ResourceProvider
+import org.ferredoxin.ferredoxinui.common.base.UiSwitchItem
+import org.ferredoxin.ferredoxinui.common.base.UiSwitchPreference
 
-abstract class BaseDecorator(val cfg: String) : UiSwitchItem {
+abstract class BaseDecorator : UiSwitchItem {
 
+    val cfg: String = this::class.java.simpleName
     abstract override val preference: UiSwitchPreference
 
-    fun uiSwitchPreference(init: UiSwitchPreferenceItemFactory.()->Unit): UiSwitchPreference {
+    fun uiSwitchPreference(init: UiSwitchPreferenceItemFactory.() -> Unit): UiSwitchPreference {
         val uiSwitchPreferenceFactory = UiSwitchPreferenceItemFactory()
         uiSwitchPreferenceFactory.init()
         return uiSwitchPreferenceFactory
     }
 
-    inner class UiSwitchPreferenceItemFactory: UiSwitchPreference {
-
+    inner class UiSwitchPreferenceItemFactory() : UiSwitchPreference {
         override lateinit var title: String
         override var summary: String? = null
+        private lateinit var titleProviderCache: ResourceProvider<String>
+        override var titleProvider: ResourceProvider<String>
+            get() {
+                if (this::titleProviderCache.isInitialized) {
+                    return titleProviderCache
+                } else {
+                    return DirectResourceProvider(title)
+                }
+            }
+            set(value) {
+                titleProviderCache = value
+            }
+        private lateinit var summaryProviderCache: ResourceProvider<String?>
+        override var summaryProvider: ResourceProvider<String?>
+            get() {
+                if (this::summaryProviderCache.isInitialized) {
+                    return summaryProviderCache
+                } else {
+                    return DirectResourceProvider(summary)
+                }
+            }
+            set(value) {
+                summaryProviderCache = value
+            }
+        override val subSummary: String? = null
+        override val clickAble: Boolean = true
         override var onClickListener: (Context) -> Boolean = { true }
         override var valid: Boolean = true
+        private val configData = ConfigData<Boolean>(cfg)
 
-        override val value: MutableLiveData<Boolean> by lazy {
-            MutableLiveData<Boolean>().apply {
+        override val value: MutableStateFlow<Boolean?> by lazy {
+            MutableStateFlow<Boolean?>(configData.getOrDefault(false)).apply {
                 SyncUtils.post {
-                    try {
-                        value = ConfigManager.getDefaultConfig().getBooleanOrDefault(cfg, false)
-                    } catch (e: Exception) {
-                        Utils.log(e)
-                    }
-                    observeForever {
-                        try {
-                            val mgr = ConfigManager.getDefaultConfig()
-                            mgr.putBoolean(cfg, it)
-                            mgr.save()
-                        } catch (e: Exception) {
-                            Utils.log(e)
-                            if (Looper.myLooper() == Looper.getMainLooper()) {
-                                Toasts.error(hostInfo.application, e.toString() + "")
-                            } else {
-                                SyncUtils.post { Toasts.error(hostInfo.application, e.toString() + "") }
-                            }
+                    GlobalScope.launch {
+                        collect {
+                            configData.value = it
                         }
                     }
                 }
             }
         }
-
     }
-
 }

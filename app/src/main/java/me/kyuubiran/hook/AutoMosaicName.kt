@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -21,13 +21,14 @@
  */
 package me.kyuubiran.hook
 
-import ltd.nextalone.util.hookBefore
-import ltd.nextalone.util.tryOrFalse
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge
+import me.singleneuron.qn_kernel.tlb.娱乐功能
 import nil.nadph.qnotified.base.annotation.FunctionEntry
 import nil.nadph.qnotified.step.DexDeobfStep
 import nil.nadph.qnotified.util.DexKit
+import xyz.nextalone.util.hookBefore
+import xyz.nextalone.util.tryOrFalse
 
 //聊天界面顶栏群名字/好友昵称自动打码
 @FunctionEntry
@@ -35,7 +36,7 @@ import nil.nadph.qnotified.util.DexKit
 object AutoMosaicName : CommonDelayAbleHookBridge(DexDeobfStep(DexKit.N_BaseChatPie_mosaic)) {
 
     override fun initOnce()=tryOrFalse {
-        DexKit.getMethodFromCache(DexKit.N_BaseChatPie_mosaic)?.hookBefore(this){
+        DexKit.doFindMethod(DexKit.N_BaseChatPie_mosaic)?.hookBefore(this){
             it.args[0]=true
         }
     }
@@ -44,6 +45,6 @@ object AutoMosaicName : CommonDelayAbleHookBridge(DexDeobfStep(DexKit.N_BaseChat
     override val preference = uiSwitchPreference {
         title = "昵称/群名片打码"
     }
-    override val preferenceLocate: Array<String> = arrayOf("其他功能", "娱乐功能")
+    override val preferenceLocate: Array<String> = 娱乐功能
 
 }

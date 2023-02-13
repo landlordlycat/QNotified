@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -22,27 +22,23 @@
 
 package me.singleneuron.hook.decorator
 
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
 import cn.lliiooll.msg.MessageReceiver
 import de.robv.android.xposed.XposedHelpers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import me.kyuubiran.util.getExFriendCfg
 import me.singleneuron.qn_kernel.data.MsgRecordData
-import me.singleneuron.qn_kernel.ui.base.辅助功能
-import nil.nadph.qnotified.SyncUtils
+import me.singleneuron.qn_kernel.tlb.辅助功能
 import nil.nadph.qnotified.ui.CommonContextWrapper
-import nil.nadph.qnotified.ui.CustomDialog
-import nil.nadph.qnotified.ui.ViewBuilder
 import nil.nadph.qnotified.util.Initiator
 import nil.nadph.qnotified.util.ReflexUtil
 import nil.nadph.qnotified.util.Utils
-import org.ferredoxin.ferredoxin_ui.base.UiItem
-import org.ferredoxin.ferredoxin_ui.base.uiEditTextPreference
+import org.ferredoxin.ferredoxinui.common.base.UiItem
+import org.ferredoxin.ferredoxinui.qnotified_style.base.uiEditTextPreference
 
 @me.singleneuron.qn_kernel.annotation.UiItem
-object RegexAntiMeg : MessageReceiver, View.OnClickListener, UiItem {
+object RegexAntiMeg : MessageReceiver, UiItem {
 
     private var regexCache: Regex? = null
     private var regexStringCache: String = ""
@@ -93,38 +89,11 @@ object RegexAntiMeg : MessageReceiver, View.OnClickListener, UiItem {
         } else return false
     }
 
-    override fun onClick(v: View?) {
-        val dialog = CustomDialog.createFailsafe(v!!.context)
-        val context = dialog.context
-        val _5 = Utils.dip2px(context, 5f)
-        val editText = EditText(context)
-        editText.setPadding(_5, _5, _5, _5 * 2)
-        val params = ViewBuilder.newLinearLayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            _5 * 2
-        )
-        val linearLayout = LinearLayout(context)
-        linearLayout.orientation = LinearLayout.VERTICAL
-        linearLayout.addView(editText, params)
-        dialog.setTitle("设置万象屏蔽卡片消息正则表达式（留空禁用）")
-            .setView(linearLayout)
-            .setPositiveButton("确定") { _, _ ->
-                getExFriendCfg().putString(
-                    RegexAntiMeg::class.java.simpleName,
-                    editText.text.toString()
-                )
-            }
-            .setNegativeButton("取消", null)
-            .create()
-            .show()
-    }
-
     override val preference = uiEditTextPreference {
         title = "万象屏蔽卡片消息"
         summary = "使用强大的正则表达式自由屏蔽卡片消息"
-        SyncUtils.post {
-            value.observeForever {
+        GlobalScope.launch {
+            value.collect {
                 getExFriendCfg().putString(RegexAntiMeg::class.java.simpleName, it)
             }
         }
@@ -132,7 +101,7 @@ object RegexAntiMeg : MessageReceiver, View.OnClickListener, UiItem {
             helperText = "留空以禁用"
         }
         contextWrapper = CommonContextWrapper::createMaterialDesignContext
-    }
+    }.second
 
     override val preferenceLocate: Array<String> = 辅助功能
 

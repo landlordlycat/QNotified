@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -66,4 +66,8 @@ public class QQVersion {
     public static final long QQ_8_8_20 = 1976;
     public static final long QQ_8_8_23 = 2034;
     public static final long QQ_8_8_33 = 2150;
+    public static final long QQ_8_8_35 = 2208;
+    public static final long QQ_8_8_38 = 2266;
+    public static final long QQ_8_8_50 = 2324;
+    public static final long QQ_8_8_68 = 2538;
 }

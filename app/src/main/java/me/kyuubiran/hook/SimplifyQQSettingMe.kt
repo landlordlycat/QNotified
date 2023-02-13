@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -33,20 +33,20 @@ import androidx.core.view.size
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
-import ltd.nextalone.base.MultiItemDelayableHook
-import ltd.nextalone.util.get
-import ltd.nextalone.util.hide
 import me.kyuubiran.util.setViewZeroSize
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.data.requireMinQQVersion
 import me.singleneuron.qn_kernel.tlb.ConfigTable
-import me.singleneuron.qn_kernel.ui.base.净化功能
+import me.singleneuron.qn_kernel.tlb.净化_侧滑
 import nil.nadph.qnotified.base.annotation.FunctionEntry
 import nil.nadph.qnotified.config.ConfigManager
 import nil.nadph.qnotified.util.Initiator
 import nil.nadph.qnotified.util.LicenseStatus
 import nil.nadph.qnotified.util.QQVersion.*
 import nil.nadph.qnotified.util.Utils
+import xyz.nextalone.base.MultiItemDelayableHook
+import xyz.nextalone.util.get
+import xyz.nextalone.util.hide
 import java.util.*
 
 
@@ -58,31 +58,39 @@ object SimplifyQQSettingMe : MultiItemDelayableHook("SimplifyQQSettingMe") {
     const val MidContentName = "SimplifyQQSettingMe::MidContentName"
 
     override val preferenceTitle: String = "侧滑栏精简"
-    override val allItems: String = ""
-    override val preferenceLocate: Array<String> = 净化功能
+    override val allItems = setOf<String>()
+    override val preferenceLocate: Array<String> = 净化_侧滑
     override fun isValid(): Boolean = requireMinQQVersion(QQ_8_4_1)
+    override val enableCustom = false
 
     //Form 8.4.1
     //Body = [0,1,0,0,0,1,4] || [0,1,0,0,0,1,4,0]
     override var items: MutableList<String> = mutableListOf(
-        "开播啦鹅",     //开播啦鹅 [0,1,0,0,0,1,4,0,1] || [0,1,0,0,0,1,4,0,1,1,1]
-        "我的小世界",    //我的小世界 [0,1,0,0,0,1,4,0,2] || [0,1,0,0,0,1,4,0,1,2,1]
-        "开通会员",     //开通会员 [0,1,0,0,0,1,4,0,3] || [0,1,0,0,0,1,4,0,1,3,1]
-        "我的钱包",     //我的钱包 [0,1,0,0,0,1,4,0,4] || [0,1,0,0,0,1,4,0,1,4,1]
-        "个性装扮",     //个性装扮 [0,1,0,0,0,1,4,0,5] || [0,1,0,0,0,1,4,0,1,5,1]
-        "情侣空间",     //情侣空间 [0,1,0,0,0,1,4,0,6] || [0,1,0,0,0,1,4,0,1,6,1]
-        "我的收藏",     //我的收藏 [0,1,0,0,0,1,4,0,7] || [0,1,0,0,0,1,4,0,1,7,1]
-        "我的相册",     //我的相册 [0,1,0,0,0,1,4,0,8] || [0,1,0,0,0,1,4,0,1,8,1]
-        "我的文件",     //我的文件 [0,1,0,0,0,1,4,0,9] || [0,1,0,0,0,1,4,0,1,9,1]
-        "我的日程",     //我的日程 [0,1,0,0,0,1,4,0,10] || [0,1,0,0,0,1,4,0,1,10,1]
-        "我的视频",     //我的视频 [0,1,0,0,0,1,4,0,11] || [0,1,0,0,0,1,4,0,1,11,1]
-        "小游戏",      //小游戏 [0,1,0,0,0,1,4,0,12] || [0,1,0,0,0,1,4,0,1,12,1]
-        "腾讯文档",     //腾讯文档 [0,1,0,0,0,1,4,0,13] || [0,1,0,0,0,1,4,0,1,13,1]
-        "每日打卡",     //每日打卡 [0,1,0,0,0,1,4,0,14] || [0,1,0,0,0,1,4,0,1,14,1]
-        "王卡免流量特权"   //开通王卡 [0,1,0,0,0,1,4,0,15] || [0,1,0,0,0,1,4,0,1,15,1]
+        "夜间模式",            //夜间模式 [0,1,0,0,0,1,6,1]
+        "登录达人",          //登录达人 [0,1,0,0,0,1,6,2]
+        "当前温度",         //当前温度 [0,1,0,0,0,1,6,3]
+        "开播啦鹅",         //开播啦鹅 [0,1,0,0,0,1,4,0,1] || [0,1,0,0,0,1,4,0,1,1,1]
+        "我的小世界",        //我的小世界 [0,1,0,0,0,1,4,0,2] || [0,1,0,0,0,1,4,0,1,2,1]
+        "开通会员",         //开通会员 [0,1,0,0,0,1,4,0,3] || [0,1,0,0,0,1,4,0,1,3,1]
+        "我的钱包",         //我的钱包 [0,1,0,0,0,1,4,0,4] || [0,1,0,0,0,1,4,0,1,4,1]
+        "个性装扮",         //个性装扮 [0,1,0,0,0,1,4,0,5] || [0,1,0,0,0,1,4,0,1,5,1]
+        "情侣空间",         //情侣空间 [0,1,0,0,0,1,4,0,6] || [0,1,0,0,0,1,4,0,1,6,1]
+        "我的收藏",         //我的收藏 [0,1,0,0,0,1,4,0,7] || [0,1,0,0,0,1,4,0,1,7,1]
+        "我的相册",         //我的相册 [0,1,0,0,0,1,4,0,8] || [0,1,0,0,0,1,4,0,1,8,1]
+        "我的文件",         //我的文件 [0,1,0,0,0,1,4,0,9] || [0,1,0,0,0,1,4,0,1,9,1]
+        "我的日程",         //我的日程 [0,1,0,0,0,1,4,0,10] || [0,1,0,0,0,1,4,0,1,10,1]
+        "我的视频",         //我的视频 [0,1,0,0,0,1,4,0,11] || [0,1,0,0,0,1,4,0,1,11,1]
+        "小游戏",          //小游戏 [0,1,0,0,0,1,4,0,12] || [0,1,0,0,0,1,4,0,1,12,1]
+        "腾讯文档",         //腾讯文档 [0,1,0,0,0,1,4,0,13] || [0,1,0,0,0,1,4,0,1,13,1]
+        "每日打卡",         //每日打卡 [0,1,0,0,0,1,4,0,14] || [0,1,0,0,0,1,4,0,1,14,1]
+        "王卡免流量特权",   //开通王卡 [0,1,0,0,0,1,4,0,15] || [0,1,0,0,0,1,4,0,1,15,1]
+        "厘米秀",
     )
 
     private val keyWords: SortedMap<String, String> = sortedMapOf(
+        "间" to "夜间模式",
+        "达" to "登录达人",
+        "天" to "登录达人",
         "播" to "开播啦鹅",
         "世界" to "我的小世界",
         "会员" to "开通会员",
@@ -101,13 +109,9 @@ object SimplifyQQSettingMe : MultiItemDelayableHook("SimplifyQQSettingMe") {
         "打卡" to "每日打卡",
         "王卡" to "王卡免流量特权",
         "流量" to "王卡免流量特权",
-        "送12个月" to "王卡免流量特权"
+        "送12个月" to "王卡免流量特权",
+        "厘米" to "厘米秀",
     )
-
-    //Body = [0,1,0,0,0,1,6]
-    private const val HIDE_YE_JIAN = "hide_ye_jian"                   //夜间模式 [0,1,0,0,0,1,6,1]
-    private const val HIDE_DA_REN = "hide_da_ren"                     //登录达人 [0,1,0,0,0,1,6,2]
-    private const val HIDE_WEN_DU = "hide_wen_du"                     //当前温度 [0,1,0,0,0,1,6,3]
 
     override fun initOnce(): Boolean {
         if (isInited) return true
@@ -142,18 +146,8 @@ object SimplifyQQSettingMe : MultiItemDelayableHook("SimplifyQQSettingMe") {
                         underSettingsLayout?.forEachIndexed { i, v ->
                             val tv = (v as LinearLayout)[1] as TextView
                             val text = tv.text
-                            when {
-                                text.contains("间") && getBooleanConfig(HIDE_YE_JIAN) -> {
-                                    v.setViewZeroSize()
-                                }
-                                (text.contains("达") || text.contains("天")) && getBooleanConfig(
-                                    HIDE_DA_REN
-                                ) -> {
-                                    v.setViewZeroSize()
-                                }
-                                i == 3 && getBooleanConfig(HIDE_WEN_DU) -> {
-                                    v.setViewZeroSize()
-                                }
+                            if (stringHit(text.toString()) || i == 3 && activeItems.contains("当前温度")) {
+                                v.setViewZeroSize()
                             }
                         }
                         val midRemovedList: MutableList<Int> = mutableListOf()
@@ -210,10 +204,6 @@ object SimplifyQQSettingMe : MultiItemDelayableHook("SimplifyQQSettingMe") {
             }
         }
         return false
-    }
-
-    override fun isEnabled(): Boolean {
-        return super.isEnabled() || getBooleanConfig(HIDE_YE_JIAN) || getBooleanConfig(HIDE_DA_REN) || getBooleanConfig(HIDE_WEN_DU)
     }
 
     //以下三个方法是曾经辉煌的MultiConfigItem和BaseMultiConfigDelayableHook最后的墓碑

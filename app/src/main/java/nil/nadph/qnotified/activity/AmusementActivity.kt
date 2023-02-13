@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -28,11 +28,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import com.tencent.mobileqq.widget.BounceScrollView
-import me.ketal.hook.Emoji2Sticker
-import me.ketal.hook.FakeBalance
-import me.ketal.hook.FakeQQLevel
-import me.ketal.hook.HideSearch
-import me.ketal.hook.HideTab
+import me.ketal.hook.*
 import me.kyuubiran.hook.AutoMosaicName
 import me.kyuubiran.hook.ShowSelfMsgByLeft
 import nil.nadph.qnotified.ui.ResUtils
@@ -58,9 +54,9 @@ class AmusementActivity : IphoneTitleBarActivityCompat() {
         ll.addView(newListItemHookSwitchInit(this, "自己的消息和头像居左显示", "娱乐功能 不进行维护",
             ShowSelfMsgByLeft))
         ll.addView(
-            ViewBuilder.newListItemButton(this, "自定义钱包余额", "仅供娱乐", null, FakeBalance.listener()))
+            ViewBuilder.newListItemButton(this, "自定义钱包余额", "仅供娱乐", null, FakeBalance.listener(this)))
         ll.addView(
-            ViewBuilder.newListItemButton(this, "自定义QQ等级", "仅本地生效", null, FakeQQLevel.listener()))
+            ViewBuilder.newListItemButton(this, "自定义QQ等级", "仅本地生效", null, FakeQQLevel.listener(this)))
         if (HideTab.isValid) {
             ll.addView(newListItemSwitchConfigNext(this, "隐藏底栏", "底栏项目移到侧滑", HideTab))
         }
@@ -69,11 +65,8 @@ class AmusementActivity : IphoneTitleBarActivityCompat() {
         }
         if (Emoji2Sticker.isValid) {
             ll.addView(
-                ViewBuilder.newListItemSwitch(
-                    this, "大号Emoji", "输入单个emoji后长按发送按钮，仅支持部分表情", Emoji2Sticker.superIsEnable()
-                ) { _, isChecked ->
-                    Emoji2Sticker.isEnabled = isChecked
-                })
+                newListItemSwitchConfigNext(this, "关闭大号Emoji", "关闭此功能，输入单个emoji后发送大表情，仅支持部分表情", Emoji2Sticker)
+            )
         }
 
         setContentBackgroundDrawable(ResUtils.skin_background)

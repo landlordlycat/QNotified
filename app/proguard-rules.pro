@@ -7,7 +7,7 @@
 -keep class com.microsoft.** { *; }
 -keep class com.rymmmmm.** { *; }
 -keep class cn.lliiooll.** { *; }
--keep class ltd.nextalone.** { *; }
+-keep class xyz.nextalone.** { *; }
 -keep class cc.ioctl.** { *; }
 -keep class com.tencent.mmkv.** { *; }
 
@@ -53,3 +53,4 @@
 -dontwarn sun.misc.SignalHandler
 -dontwarn org.apache.bsf.util.BSFEngineImpl
 -dontwarn java.applet.Applet
+-dontwarn org.apache.bsf.*

@@ -1,11 +1,6 @@
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
-import java.io.File
-import java.util.*
-
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,16 +20,21 @@ import java.util.*
  * <https://github.com/ferredoxin/QNotified/blob/master/LICENSE.md>.
  */
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+import java.io.File
+import java.util.*
+
 abstract class ReplaceIcon : DefaultTask() {
     @TaskAction
     fun run() {
-        val projectDir: File = project.projectDir
+        val iconsDir = File(project.projectDir, "icons")
         val iconFileDirs = listOf(
-            File(projectDir, "MiStyleIcons"),
-            File(projectDir, "icons"),
+            File(iconsDir, "MiStyleIcons"),
+            File(iconsDir, "classic"),
             //File(projectDir ,"ChineseNewYearIcons")
         )
-        val fileCount = iconFileDirs.fold(0) { i: kotlin.Int, file: File ->
+        val fileCount = iconFileDirs.fold(0) { i: Int, file: File ->
             i + file.listFiles()!!.size
         }
         var number = Random().nextInt(fileCount)
@@ -50,7 +50,7 @@ abstract class ReplaceIcon : DefaultTask() {
             number -= iconFileDir.listFiles()!!.size
         }
         println("Select Icon: $iconFile")
-        iconFile!!.copyTo(File(projectDir, "src/main/res/drawable/icon.png"), true)
+        iconFile!!.copyTo(File(project.projectDir, "src/main/res/drawable/icon.png"), true)
         //}
     }
 }

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -67,6 +67,10 @@ public class LicenseStatus {
     public static void setUserCurrentStatus() {
         new Thread(() -> {
             int currentStatus = TransactionHelper.getUserStatus(Utils.getLongAccountUin());
+            // 如果获取不到就放弃更新状态
+            if (currentStatus == UserStatusConst.notExist) {
+                return;
+            }
             logi("User Current Status: "
                 + "" + currentStatus);
             ConfigManager.getDefaultConfig().putInt(qn_user_auth_status, currentStatus);

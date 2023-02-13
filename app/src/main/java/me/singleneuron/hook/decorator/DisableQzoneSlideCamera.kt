@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,10 +25,10 @@ import android.content.Intent
 import de.robv.android.xposed.XC_MethodHook
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.decorator.BaseStartActivityHookDecorator
-import me.singleneuron.qn_kernel.ui.base.净化功能
+import me.singleneuron.qn_kernel.tlb.净化_扩展
 
 @UiItem
-object DisableQzoneSlideCamera : BaseStartActivityHookDecorator("disableCameraOnSweepingInQzone") {
+object DisableQzoneSlideCamera : BaseStartActivityHookDecorator() {
 
     override fun doDecorate(intent: Intent, param: XC_MethodHook.MethodHookParam): Boolean {
         if (intent.data?.toString()?.contains("qzoneSlideCamera") == true) {
@@ -42,6 +42,6 @@ object DisableQzoneSlideCamera : BaseStartActivityHookDecorator("disableCameraOn
         title = "屏蔽空间滑动相机"
     }
 
-    override val preferenceLocate: Array<String> = 净化功能
+    override val preferenceLocate: Array<String> = 净化_扩展
 
 }

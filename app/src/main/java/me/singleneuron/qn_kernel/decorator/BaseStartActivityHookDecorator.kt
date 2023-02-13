@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,7 +25,7 @@ import android.content.Intent
 import de.robv.android.xposed.XC_MethodHook
 import nil.nadph.qnotified.util.Utils
 
-abstract class BaseStartActivityHookDecorator(cfg: String) : BaseDecorator(cfg) {
+abstract class BaseStartActivityHookDecorator : BaseDecorator() {
 
     fun decorate(intent: Intent, param: XC_MethodHook.MethodHookParam): Boolean {
         if (preference.value.value != true) return false

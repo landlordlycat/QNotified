@@ -1,9 +1,6 @@
-import org.gradle.api.Project
-import java.io.File
-
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -22,6 +19,9 @@ import java.io.File
  * <https://www.gnu.org/licenses/>
  * <https://github.com/ferredoxin/QNotified/blob/master/LICENSE.md>.
  */
+
+import org.gradle.api.Project
+import java.io.File
 
 object Common {
 

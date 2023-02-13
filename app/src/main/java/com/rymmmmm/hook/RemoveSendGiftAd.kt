@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -21,19 +21,26 @@
  */
 package com.rymmmmm.hook
 
-import ltd.nextalone.util.hookBefore
-import ltd.nextalone.util.isStatic
-import ltd.nextalone.util.set
-import ltd.nextalone.util.tryOrFalse
+import me.singleneuron.qn_kernel.annotation.UiItem
+import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge
+import me.singleneuron.qn_kernel.tlb.花Q
 import nil.nadph.qnotified.SyncUtils
 import nil.nadph.qnotified.base.annotation.FunctionEntry
-import nil.nadph.qnotified.hook.CommonDelayableHook
 import nil.nadph.qnotified.util.Initiator
+import xyz.nextalone.util.hookBefore
+import xyz.nextalone.util.isStatic
+import xyz.nextalone.util.set
+import xyz.nextalone.util.tryOrFalse
 
 //去除群聊送礼物广告
 @FunctionEntry
-object RemoveSendGiftAd : CommonDelayableHook("rq_remove_send_gift_ad",
-    SyncUtils.PROC_ANY) {
+@UiItem
+object RemoveSendGiftAd : CommonDelayAbleHookBridge(SyncUtils.PROC_ANY) {
+    override val preference = uiSwitchPreference {
+        title = "免广告送免费礼物[仅限群聊送礼物]"
+        summary = "若失效请使用屏蔽小程序广告"
+    }
+    override val preferenceLocate = 花Q
     public override fun initOnce() = tryOrFalse {
         val troopGiftPanel = Initiator
             .load("com.tencent.biz.troopgift.TroopGiftPanel")
@@ -46,4 +53,6 @@ object RemoveSendGiftAd : CommonDelayableHook("rq_remove_send_gift_ad",
             }
         }
     }
+
+
 }

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -77,7 +77,10 @@ public class CustomSplash extends CommonDelayableHook {
                         return;
                     }
                     String fileName = (String) param.args[0];
-                    if ("splash.jpg".equals(fileName) || "splash_big.jpg".equals(fileName)) {
+                    if ("splash.jpg".equals(fileName)
+                        || "splash_big.jpg".equals(fileName)
+                        || "splash/splash_simple.png".equals(fileName)
+                        || "splash/splash_big_simple.png".equals(fileName)) {
                         String customPath = RikkaCustomSplash.getCurrentSplashPath();
                         if (customPath == null) {
                             return;

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -37,8 +37,7 @@ public abstract class AbsDelayableHook implements SwitchConfigItem {
 
     @NonNull
     public static AbsDelayableHook[] queryDelayableHooks() {
-        return nil.nadph.qnotified.gen.AnnotatedFunctionItemList.getAnnotatedFunctionItemClassList()
-            .toArray(new AbsDelayableHook[0]);
+        return nil.nadph.qnotified.gen.AnnotatedFunctionItemList.getAnnotatedFunctionItemClassList();
     }
 
     public static void allowEarlyInit(@NonNull AbsDelayableHook hook) {

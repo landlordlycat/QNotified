@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -36,7 +36,7 @@ fun ViewGroup.findViewByText(text: String, contains: Boolean = false) =
 
 fun ViewGroup.findViewByType(clazz: Class<*>) =
     this.findViewByCondition {
-        it.javaClass == clazz
+        it.javaClass.isAssignableFrom(clazz)
     }
 
 fun ViewGroup.findViewByCondition(condition: (view: View) -> Boolean): View? {

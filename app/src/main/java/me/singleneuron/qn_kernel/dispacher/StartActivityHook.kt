@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -28,6 +28,8 @@ import de.robv.android.xposed.XposedBridge
 import me.singleneuron.base.adapter.BaseDelayableHookAdapter
 import me.singleneuron.hook.DebugDump
 import me.singleneuron.hook.decorator.DisableQzoneSlideCamera
+import me.singleneuron.hook.decorator.ForceSystemAlbum
+import me.singleneuron.hook.decorator.ForceSystemFile
 import me.singleneuron.hook.decorator.FxxkQQBrowser
 import nil.nadph.qnotified.SyncUtils
 import nil.nadph.qnotified.base.annotation.FunctionEntry
@@ -39,7 +41,9 @@ object StartActivityHook :
     val decorators = arrayOf(
         DebugDump,
         DisableQzoneSlideCamera,
-        FxxkQQBrowser
+        FxxkQQBrowser,
+        ForceSystemAlbum,
+        ForceSystemFile
     )
 
     override fun doInit(): Boolean {

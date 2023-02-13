@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -140,7 +140,7 @@ public class ManageScriptsActivity extends IphoneTitleBarActivityCompat {
         for (QNScript qs : QNScriptManager.getScripts()) {
             String name = qs.getName() == null ? "出错" : qs.getName();
             String decs = qs.getDecs() == null ? "出错" : qs.getDecs();
-            main.addView(ViewBuilder.newListItemButton(this, name, decs, qs.getEnable(),
+            main.addView(ViewBuilder.newListItemButton(this, name, decs, qs.getEnable().toString(),
                 view -> ScriptSettingDialog.OnClickListener_createDialog(view.getContext(), qs)));
         }
     }

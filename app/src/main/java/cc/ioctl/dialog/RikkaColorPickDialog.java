@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -74,7 +74,11 @@ public class RikkaColorPickDialog extends RikkaDialog.RikkaConfigItem {
     @SuppressLint("InflateParams")
     @Override
     public void onClick(View v) {
-        dialog = (AlertDialog) CustomDialog.createFailsafe(v.getContext()).setTitle("花Q主题")
+        showDialog(v.getContext());
+    }
+
+    public void showDialog(Context context) {
+        dialog = (AlertDialog) CustomDialog.createFailsafe(context).setTitle("花Q主题")
             .setNegativeButton("取消", null)
             .setPositiveButton("保存", null).create();
         dialog.setCancelable(true);

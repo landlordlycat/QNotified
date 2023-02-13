@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -22,23 +22,30 @@
 package me.ketal.hook
 
 import android.view.View
-import ltd.nextalone.data.TroopInfo
-import ltd.nextalone.util.*
 import me.ketal.util.BaseUtil.tryVerbosely
+import me.singleneuron.qn_kernel.annotation.UiItem
+import me.singleneuron.qn_kernel.base.CommonDelayAbleHookBridge
 import me.singleneuron.qn_kernel.data.requireMinVersion
 import me.singleneuron.qn_kernel.tlb.ConfigTable
+import me.singleneuron.qn_kernel.tlb.增强功能
 import nil.nadph.qnotified.base.annotation.FunctionEntry
-import nil.nadph.qnotified.hook.CommonDelayableHook
 import nil.nadph.qnotified.step.DexDeobfStep
 import nil.nadph.qnotified.util.*
 import nil.nadph.qnotified.util.ReflexUtil.getFirstByType
+import xyz.nextalone.data.TroopInfo
+import xyz.nextalone.util.*
 
 @FunctionEntry
-object SortAtPanel : CommonDelayableHook(
-    "ketal_At_Panel_Hook",
+@UiItem
+object SortAtPanel : CommonDelayAbleHookBridge(
     DexDeobfStep(DexKit.N_AtPanel__refreshUI),
     DexDeobfStep(DexKit.N_AtPanel__showDialogAtView)
 ) {
+    override val preference = uiSwitchPreference {
+        title = "修改@界面排序"
+        summary = "排序由群主管理员至正常人员"
+    }
+    override val preferenceLocate = 增强功能
     const val sessionInfoTroopUin = "SortAtPanel.sessionInfoTroopUin"
     private var isSort: Boolean? = null
     override fun initOnce() = tryVerbosely(false) {

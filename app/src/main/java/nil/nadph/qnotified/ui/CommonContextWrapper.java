@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -111,7 +111,7 @@ public class CommonContextWrapper extends ContextThemeWrapper {
 
     @NonNull
     public static CommonContextWrapper createMaterialDesignContext(@NonNull Context base) {
-        return new CommonContextWrapper(base, R.style.Theme_MaiTungTMDesign,
+        return new CommonContextWrapper(base, R.style.Theme_MaiTungTMUI,
             recreateNighModeConfig(base, ResUtils.getNightModeMasked()));
     }
 }

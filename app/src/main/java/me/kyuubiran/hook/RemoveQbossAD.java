@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -23,6 +23,7 @@ package me.kyuubiran.hook;
 
 import android.view.View;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -51,7 +52,7 @@ public class RemoveQbossAD extends CommonDelayableHook {
                     .isStatic(m.getModifiers())) {
                     XposedBridge.hookMethod(m, new XC_MethodHook() {
                         @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) {
                             if (LicenseStatus.sDisableCommonHooks) {
                                 return;
                             }
@@ -62,6 +63,23 @@ public class RemoveQbossAD extends CommonDelayableHook {
                         }
                     });
                 }
+            }
+            try {
+                XposedBridge.hookAllMethods(Initiator.load(
+                        "com.tencent.mobileqq.activity.recent.bannerprocessor.VasADBannerProcessor"),
+                    "handleMessage", new XC_MethodReplacement() {
+                        @Override
+                        protected Object replaceHookedMethod(MethodHookParam param) {
+                            try {
+                                return XposedBridge.invokeOriginalMethod(param.method,
+                                    param.thisObject, param.args);
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+                    });
+            } catch (Exception e) {
+                //ignore
             }
             return true;
         } catch (Exception t) {

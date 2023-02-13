@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -24,9 +24,7 @@ package nil.nadph.qnotified.hook;
 import static nil.nadph.qnotified.util.Utils.log;
 
 import android.os.Looper;
-
 import androidx.annotation.NonNull;
-
 import me.singleneuron.qn_kernel.data.HostInfo;
 import nil.nadph.qnotified.SyncUtils;
 import nil.nadph.qnotified.config.ConfigManager;
@@ -56,9 +54,6 @@ public abstract class CommonDelayableHook extends BaseDelayableHook {
         mKeyName = keyName;
         mTargetProcess = targetProcess;
         mDefaultEnabled = defEnabled;
-        if (preconditions == null) {
-            preconditions = new Step[0];
-        }
         mPreconditions = preconditions;
     }
 
@@ -104,13 +99,7 @@ public abstract class CommonDelayableHook extends BaseDelayableHook {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 Toasts.error(HostInfo.getHostInfo().getApplication(), e + "");
             } else {
-                SyncUtils.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toasts.error(HostInfo.getHostInfo().getApplication(),
-                            e + "");
-                    }
-                });
+                SyncUtils.post(() -> Toasts.error(HostInfo.getHostInfo().getApplication(), e + ""));
             }
         }
     }

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -35,10 +35,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
-import me.singleneuron.qn_kernel.ui.NewSettingsActivity;
+import me.singleneuron.qn_kernel.tlb.ActivityRouter;
 import nil.nadph.qnotified.R;
 import nil.nadph.qnotified.activity.EulaActivity;
 import nil.nadph.qnotified.base.annotation.FunctionEntry;
@@ -111,7 +110,8 @@ public class SettingEntryHook extends CommonDelayableHook {
                                 item.setOnClickListener(v -> {
                                     if (LicenseStatus.hasUserAcceptEula()) {
                                         activity.startActivity(
-                                            new Intent(activity, NewSettingsActivity.class));
+                                            new Intent(activity,
+                                                ActivityRouter.INSTANCE.getActivityClass()));
                                     } else {
                                         activity.startActivity(
                                             new Intent(activity, EulaActivity.class));

@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -36,14 +36,15 @@ import nil.nadph.qnotified.activity.IphoneTitleBarActivityCompat;
 public class CounterfeitActivityInfoFactory {
 
     @Nullable
-    public static ActivityInfo makeProxyActivityInfo(@NonNull String className, int flags) {
+    public static ActivityInfo makeProxyActivityInfo(@NonNull String className, long flags) {
         try {
             Context ctx = H.getApplication();
             Class<?> cl = Class.forName(className);
             try {
                 ActivityInfo proto = ctx.getPackageManager().getActivityInfo(new ComponentName(
-                        ctx.getPackageName(), "com.tencent.mobileqq.activity.QQSettingSettingActivity"),
-                    flags);
+                        ctx.getPackageName(),
+                        "com.tencent.mobileqq.activity.QQSettingSettingActivity"),
+                    (int) flags);
                 if (!IphoneTitleBarActivityCompat.class.isAssignableFrom(cl)) {
                     // init style here, comment it out if it crashes on Android >= 10
                     proto.theme = R.style.Theme_MaiTungTMDesign;

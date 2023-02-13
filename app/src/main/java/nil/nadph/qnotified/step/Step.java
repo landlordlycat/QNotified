@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,6 +25,12 @@ import androidx.annotation.Nullable;
 
 public interface Step extends Comparable<Step> {
 
+    /**
+     * Execute this step, de-obfuscate the dex file. This method takes a long time, so it should not be called in the
+     * main thread.
+     *
+     * @return true if the step is done successfully, false otherwise
+     */
     boolean step();
 
     boolean isDone();

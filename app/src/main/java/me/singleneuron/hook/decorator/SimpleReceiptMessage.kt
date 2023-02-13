@@ -1,6 +1,6 @@
 /*
  * QNotified - An Xposed module for QQ/TIM
- * Copyright (C) 2019-2021 dmca@ioctl.cc
+ * Copyright (C) 2019-2022 dmca@ioctl.cc
  * https://github.com/ferredoxin/QNotified
  *
  * This software is non-free but opensource software: you can redistribute it
@@ -25,11 +25,11 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import me.singleneuron.qn_kernel.annotation.UiItem
 import me.singleneuron.qn_kernel.decorator.BaseItemBuilderFactoryHookDecorator
-import me.singleneuron.qn_kernel.ui.base.净化功能
+import me.singleneuron.qn_kernel.tlb.净化_扩展
 import nil.nadph.qnotified.util.ReflexUtil.iget_object_or_null
 
 @UiItem
-object SimpleReceiptMessage : BaseItemBuilderFactoryHookDecorator("simpleReceiptMessage") {
+object SimpleReceiptMessage : BaseItemBuilderFactoryHookDecorator() {
 
     override fun doDecorate(
         result: Int,
@@ -56,6 +56,6 @@ object SimpleReceiptMessage : BaseItemBuilderFactoryHookDecorator("simpleReceipt
         title = "回执消息文本化"
     }
 
-    override val preferenceLocate: Array<String> = 净化功能
+    override val preferenceLocate: Array<String> = 净化_扩展
 
 }
